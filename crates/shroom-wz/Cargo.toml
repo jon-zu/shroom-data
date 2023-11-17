@@ -18,7 +18,7 @@ bytemuck = "1"
 id_tree = "1"
 image = "0.24"
 itoa = "1"
-flate2 = { version = "1", features = ["zlib"] }
+flate2 = { version = "1" }
 memmap2 = { version = "0.9", optional = true }
 texpresso = "2"
 serde = { version = "1", features = ["derive"] }
