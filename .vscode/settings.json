@@ -1,0 +1,56 @@
+{
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "crates/util/shroom-wz-pack/out/skill/[0-9]*/*.json"
+            ],
+            "url": "./schemas/skill.schema.json"
+        },
+        {
+            "fileMatch": [
+                "crates/util/shroom-wz-pack/out/skill/MobSkill.img/img.json"
+            ],
+            "url": "./schemas/mob_skill.schema.json"
+        },
+        {
+            "fileMatch": [
+                "crates/util/shroom-wz-pack/out/mobs/*.img/img.json"
+            ],
+            "url": "./schemas/mob.schema.json"
+        },
+        {
+            "fileMatch": [
+                "crates/util/shroom-wz-pack/out2/items/Cash/*/img.json",
+                "crates/util/shroom-wz-pack/out2/items/Consume/*/img.json",
+                "crates/util/shroom-wz-pack/out2/items/Install/*/img.json",
+                "crates/util/shroom-wz-pack/out2/items/Etc/*/img.json",
+                "crates/util/shroom-wz-pack/out2/items/Special/*/img.json"
+            ],
+            "url": "./schemas/item.schema.json"
+        },
+        {
+            "fileMatch": [
+                "crates/util/shroom-wz-pack/out/items/Pet/*/img.json"
+            ],
+            "url": "./schemas/pet_item.schema.json"
+        },
+        {
+            "fileMatch": [
+                "crates/util/shroom-wz-pack/out/items/ItemOption.img/img.json"
+            ],
+            "url": "./schemas/item_option.schema.json"
+        },
+        {
+            "fileMatch": [
+                "crates/util/shroom-wz-pack/out/maps/Map/*/*/img.json"
+            ],
+            "url": "./schemas/map.schema.json"
+        },
+        {
+            "fileMatch": [
+                "crates/util/shroom-wz-pack/out2/char/[a-zA-Z]*/*/img.json"
+            ],
+            "url": "./schemas/char.schema.json"
+        }
+    ]
+}

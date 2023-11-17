@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "crates/shroom-wz",
+    "crates/shroom-wz-ui",
+    "crates/shroom-wz-pack",
+    "crates/util/schema_validator",
+]
+resolver = "2"

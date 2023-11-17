@@ -1,0 +1,8 @@
+.DS_Store
+
+/target
+/Cargo.lock
+
+schemas
+old
+crates/shroom-wz-ui/dist
