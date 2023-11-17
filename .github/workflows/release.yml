@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: shroom-wz-pack-${{ matrix.platform.os_name }}
-          path: "shroom-wz-pack-*"
+          path: "shroom-wz-pack*"
       - name: Generate SHA-256
         run: shasum -a 256 ${{ matrix.platform.name }}
       - name: Publish GitHub release
