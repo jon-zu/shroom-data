@@ -25,5 +25,5 @@ jobs:
         with:
           command: ${{ matrix.platform.command }}
           target: ${{ matrix.platform.target }}
-          args: "-p shroom-wz-pack --locked --release"
+          args: "-p shroom-wz-pack --release"
           strip: true
