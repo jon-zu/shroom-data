@@ -6,3 +6,5 @@
 schemas
 old
 crates/shroom-wz-ui/dist
+crates/shroom-wz-pack/out
+crates/shroom-wz-pack/out2

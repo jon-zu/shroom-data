@@ -10,7 +10,6 @@ webp = ["webp-animation"]
 
 [dependencies]
 webp-animation = { version = "0.9", optional = true }
-libwebp-sys2 = { version = "0.1", optional = true, features = ["static"]}
 aes = "0.8"
 anyhow = "1"
 binrw = "0.13"
