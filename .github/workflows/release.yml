@@ -1,16 +1,29 @@
-
-
 name: build
 on: [push]
 
 jobs:
-  build:
-    name: build
-    runs-on: ubuntu-latest
+  release:
+    name: Release - ${{ matrix.platform.release_for }}
+    strategy:
+      matrix:
+        platform:
+          - release_for: Windows-x86_64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bin: shroom-wz-unpack.exe
+            name: shroom-wz-unpack.zip
+            command: both
+
+            # more release targets here ...
+
+    runs-on: ${{ matrix.platform.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with: 
-          toolchain: stable-x86_64-pc-windows-gnu
-          targets: x86_64-pc-windows-gnu
-      - run: cargo build --release -p shroom-wz-pack --target x86_64-pc-windows-gnu
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build binary
+        uses: houseabsolute/actions-rust-cross@v0
+        with:
+          command: ${{ matrix.platform.command }}
+          target: ${{ matrix.platform.target }}
+          args: "-p shroom-wz-pack --locked --release"
+          strip: true
