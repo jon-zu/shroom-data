@@ -46,4 +46,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           draft: true
-          files: "shroom-wz-pack-*"
+          files: "shroom-wz-pack*"
