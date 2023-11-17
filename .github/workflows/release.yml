@@ -5,11 +5,11 @@ on: [push]
 
 jobs:
   build:
-    name: cargo test
+    name: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with: 
           targets: x86_64-pc-windows-gnu
-      - run: cargo build --release -p shroom-wz-pack
+      - run: cargo build --release -p shroom-wz-pack --target x86_64-pc-windows-gnu
