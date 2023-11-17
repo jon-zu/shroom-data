@@ -3,6 +3,8 @@
 # App (Project) Name
 name = "wz-explorer"
 
+base_path = "shroom-data"
+
 # Dioxus App Default Platform
 # desktop, web, mobile, ssr
 default_platform = "web"
