@@ -37,10 +37,11 @@ pub struct WzCrypto {
     xor_key_buffer: [u8; WZ_KEY_BUFFER_LEN],
     data_offset: u32,
     offset_magic: u32,
+    no_transform: bool
 }
 
 impl WzCrypto {
-    pub fn new(ctx: &WzCryptoContext, version: WzVersion, data_offset: u32) -> Self {
+    pub fn new(ctx: &WzCryptoContext, version: WzVersion, data_offset: u32, no_transform: bool) -> Self {
         let cipher = aes::Aes256::new(ctx.key.as_ref().into());
 
         let mut result = Self {
@@ -50,6 +51,7 @@ impl WzCrypto {
             version_hash: version.hash(),
             data_offset,
             offset_magic: ctx.offset_magic,
+            no_transform
         };
 
         let mut key = [0; WZ_KEY_BUFFER_LEN];
@@ -59,7 +61,7 @@ impl WzCrypto {
     }
 
     pub fn from_cfg(cfg: WzConfig, data_offset: u32) -> Self {
-        Self::new(cfg.region.crypto_context(), cfg.version, data_offset)
+        Self::new(cfg.region.crypto_context(), cfg.version, data_offset, cfg.no_transform)
     }
 
     fn fill_key<const N: usize>(&self, key: &mut [u8; N]) {
@@ -97,6 +99,10 @@ impl WzCrypto {
     }
 
     pub fn transform(&self, buf: InOutBuf<'_, '_, u8>) {
+        if self.no_transform {
+            return;
+        }
+
         let n = buf.len();
         if n <= WZ_KEY_BUFFER_LEN {
             self.transform_small(buf)

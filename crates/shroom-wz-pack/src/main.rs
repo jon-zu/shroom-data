@@ -1,5 +1,7 @@
 use std::{
     collections::VecDeque,
+    fs::File,
+    io::{Cursor, Read},
     path::{Path, PathBuf},
 };
 
@@ -11,9 +13,10 @@ use shroom_wz::{
     l0::WzImgHeader,
     l1::canvas::WzCanvas,
     val::WzValue,
-    version::{WzVersion, WzRegion},
+    version::{WzRegion, WzVersion},
     WzConfig, WzReader,
 };
+use glob::glob;
 
 use rayon::prelude::*;
 
@@ -82,16 +85,15 @@ impl<R: WzIO> ImgUnpacker<R> {
 }
 
 fn unpack_img<R: WzIO>(
-    mut r: WzReader<R>,
+    img_reader: WzImgReader<R>,
     path: String,
-    img: WzImgHeader,
+    //img: WzImgHeader,
     out_dir: &Path,
 ) -> anyhow::Result<()> {
-    let path = path.strip_prefix("/root/").unwrap();
+    let path = path.strip_prefix("/root/").unwrap_or(&path);
     let path = out_dir.join(path);
 
     let p = format!("{path:?}");
-    let img_reader = r.img_reader(&img)?;
     let mut unpacker = ImgUnpacker::new(img_reader, path.clone()).context(p)?;
 
     unpacker.write_json()?;
@@ -99,6 +101,16 @@ fn unpack_img<R: WzIO>(
 
     println!("Unpacked: {path:?}");
     Ok(())
+}
+
+fn unpack_wz_img<R: WzIO>(
+    mut r: WzReader<R>,
+    path: String,
+    img: WzImgHeader,
+    out_dir: &Path,
+) -> anyhow::Result<()> {
+    let img_reader = r.img_reader(&img)?;
+    unpack_img(img_reader, path, out_dir)
 }
 
 fn unpack<R: WzIO + Clone + Send + Sync>(
@@ -112,7 +124,7 @@ fn unpack<R: WzIO + Clone + Send + Sync>(
     let errs = imgs
         .into_iter()
         .par_bridge()
-        .flat_map(|(path, img)| unpack_img(file.clone(), path, img, out_dir).err())
+        .flat_map(|(path, img)| unpack_wz_img(file.clone(), path, img, out_dir).err())
         .collect::<Vec<anyhow::Error>>();
 
     if !errs.is_empty() {
@@ -125,12 +137,27 @@ fn unpack<R: WzIO + Clone + Send + Sync>(
     Ok(())
 }
 
+fn img_file_unpack(file: impl AsRef<Path>, out_dir: PathBuf, cfg: WzConfig) -> anyhow::Result<()> {
+    let mut data = vec![];
+    let mut img_buf = File::open(file.as_ref())?;
+    img_buf.read_to_end(&mut data)?;
+
+    let r = Cursor::new(&data);
+    let mut r = WzReader::open_img(r, cfg);
+
+    let img_r = r.root_img_reader()?;
+    std::fs::create_dir_all(&out_dir)?;
+    unpack_img(img_r, "".to_string(), &out_dir)?;
+
+    Ok(())
+}
 
 #[derive(clap::ValueEnum, Clone, Debug)]
 enum Region {
-   Gms,
-   Ems,
-   Other
+    Gms,
+    Ems,
+    Other,
+    BmsSrv
 }
 
 impl Region {
@@ -138,9 +165,9 @@ impl Region {
         match self {
             Region::Gms => WzRegion::GMS,
             Region::Ems => WzRegion::SEA,
-            Region::Other => WzRegion::Other,
+            Region::Other=> WzRegion::Other,
+            Region::BmsSrv => WzRegion::BmsSrv
         }
-
     }
 }
 
@@ -169,13 +196,25 @@ enum Commands {
         #[arg(short, long, value_name = "file")]
         src_file: PathBuf,
     },
+    UnpackImg {
+        #[arg(short, long, value_name = "dir")]
+        target_dir: PathBuf,
+        #[arg(short, long, value_name = "file")]
+        src_file: PathBuf,
+    },
+    UnpackImgDir {
+        #[arg(short, long, value_name = "dir")]
+        target_dir: PathBuf,
+        #[arg(short, long, value_name = "file")]
+        src_dir: PathBuf,
+    },
 }
 
 fn main() -> anyhow::Result<()> {
     let cmd = Cli::parse();
     let version = WzVersion(cmd.wz_version.unwrap_or(95));
-    let region = cmd.region.unwrap_or(Region::Gms).into_wz();
-    let cfg = WzConfig::new(region, version.0);
+    let region = cmd.region.unwrap_or(Region::Gms);
+    let cfg = WzConfig::new(region.into_wz(), version.0);
 
     match cmd.command {
         Commands::Pack {
@@ -192,6 +231,27 @@ fn main() -> anyhow::Result<()> {
             let file = WzReader::open_file_mmap_shared(src_file, cfg)?;
             std::fs::create_dir_all(&target_dir)?;
             unpack(file, target_dir)?;
+        }
+        Commands::UnpackImg {
+            target_dir,
+            src_file,
+        } => {
+            img_file_unpack(&src_file, target_dir.clone(), cfg)?;
+        }
+
+        Commands::UnpackImgDir {
+            target_dir,
+            src_dir,
+        } => {
+            glob(&format!("{src_dir}/**/*.img", src_dir = src_dir.display()))?.par_bridge()
+                .for_each(|img| {
+
+                    let src_file = img.unwrap();
+                    let dir = src_file.strip_prefix(&src_dir).unwrap();
+                    if let Err(err) = img_file_unpack(&src_file, target_dir.join(dir), cfg) {
+                        println!("Error: {err:?}");
+                    }
+                });
         }
     };
 

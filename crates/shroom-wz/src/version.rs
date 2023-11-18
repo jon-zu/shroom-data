@@ -44,6 +44,7 @@ pub enum WzRegion {
     GMS,
     SEA,
     Other,
+    BmsSrv,
 }
 
 impl WzRegion {
@@ -52,6 +53,7 @@ impl WzRegion {
             WzRegion::GMS => keys::GMS_CRYPTO_CTX,
             WzRegion::SEA => keys::SEA_CRYPTO_CTX,
             WzRegion::Other => keys::DEFAULT_CRYPTO_CTX,
+            WzRegion::BmsSrv => keys::DEFAULT_CRYPTO_CTX,
         }
     }
 }

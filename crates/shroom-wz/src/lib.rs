@@ -34,6 +34,7 @@ use version::WzVersion;
 pub struct WzConfig {
     pub region: version::WzRegion,
     pub version: WzVersion,
+    pub no_transform: bool
 }
 
 impl WzConfig {
@@ -41,6 +42,7 @@ impl WzConfig {
         Self {
             region,
             version: WzVersion(version),
+            no_transform: matches!(region, version::WzRegion::BmsSrv)
         }
     }
 
@@ -48,6 +50,7 @@ impl WzConfig {
         Self {
             region: version::WzRegion::GMS,
             version: WzVersion(version),
+            no_transform: false
         }
     }
 }

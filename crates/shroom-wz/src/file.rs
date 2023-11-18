@@ -6,6 +6,7 @@ use std::{
     sync::Arc,
 };
 
+use anyhow::Context;
 use binrw::BinRead;
 
 use crate::{
@@ -51,7 +52,7 @@ where
         Ok(WzObject::read_le_args(
             &mut self.r,
             WzImgReadCtx::new(&self.crypto, &self.str_table),
-        )?)
+        ).context("Root")?)
     }
 
     /// Read an object with the given object header
