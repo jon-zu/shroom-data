@@ -1,6 +1,5 @@
 [application]
 name = "wz-explorer"
-base_path = "shroom-data"
 default_platform = "web"
 out_dir = "../../docs"
 asset_dir = "public"
@@ -8,6 +7,7 @@ asset_dir = "public"
 [web.app]
 title = "wz explorer"
 index_on_404 = true
+base_path = "shroom-data"
 
 [web.watcher]
 reload_html = true
