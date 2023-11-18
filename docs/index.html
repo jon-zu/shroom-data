@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Shroom WZ</title>
+  <title>wz explorer</title>
   <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="UTF-8" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@3.9.2/dist/full.css">
+<link rel="stylesheet" href="https://cdn.tailwindcss.com">
 
 </head>
 <body>
   <div id="main"></div>
   <script type="module">
-    import init from "/./assets/dioxus/wz-explorer.js";
-    init("/./assets/dioxus/wz-explorer_bg.wasm").then(wasm => {
+    import init from "/./shroom-data/assets/dioxus/wz-explorer.js";
+    init("/./assets/shroom-data/dioxus/wz-explorer_bg.wasm").then(wasm => {
       if (wasm.__wbindgen_start == undefined) {
         wasm.main();
       }

@@ -42,7 +42,7 @@
         },
         {
             "fileMatch": [
-                "crates/util/shroom-wz-pack/out/maps/Map/*/*/img.json"
+                "crates/shroom-wz-pack/out2/maps/Map/*/*/img.json"
             ],
             "url": "./schemas/map.schema.json"
         },
